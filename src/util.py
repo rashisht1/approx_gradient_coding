@@ -6,6 +6,7 @@ import numpy as np
 import itertools
 import scipy.special as sp
 from scipy.sparse import csr_matrix
+import networkx as nx
 
 # ---- Data generation, saving, loading and modification routines
 
@@ -81,12 +82,43 @@ def getB(n_workers,n_stragglers):
 
     return B
 
-def getBapprox(n_workers,n_stragglers, expander_ver):
-    B=np.zeros([n_workers,n_workers])
+def getBapprox(n, d, expander_ver):
+    B=np.zeros([n,n])
 
-    # this function should define various expander constructions based on expander_ver
+    # this function defines various expander constructions based on expander_ver
 
-    return B
+    if(expander_ver==0):
+        # expander_ver = 0 represents a random d-regular graph
+        # should potentially add Identity to this B matrix ?
+        G = nx.random_regular_graph(d,n)
+        adj_list = G.adjacency_list()
+        for i in range(n):
+            B[i,adj_list[i]] = 1
+
+    elif(expander_ver==1):
+        #expander_ver = 1 represents a random d-regular (both sides) bipartite graph
+        while True:
+            budget = d*np.ones(n)
+            B[:]=0
+            for i in range(n):
+                valset = [i for i in range(n) if budget[i]>0]
+                perm = np.random.permutation(valset)[:d]
+                budget[perm]=budget[perm]-1
+                B[i,perm] = 1
+            if sum(budget)==0:
+                break
+
+    elif(expander_ver==2):
+        #expander_ver = 2 represents a Margulis graph (number of vertices n must be square)
+        assert((np.sqrt(n)).is_integer())
+        G = nx.margulis_gabber_galil_graph(int(np.sqrt(n)))
+        G = nx.convert_node_labels_to_integers(G)
+        edge_list = G.edges()
+        for e in edge_list:
+            B[e[0],e[1]]+= 1
+            B[e[1],e[0]]+= 1
+
+    return (1.0/d)*B
 
 def getArowlinear(completed_workers):
     # this function defines a linear time reconstruction based on machines that have returned --- (not used in the code though)
