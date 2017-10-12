@@ -5,13 +5,13 @@ import networkx as nx
 from util import *
 import matplotlib.pyplot as plt
 
-n = 100
-d_list = [8]
+n = 50
+d_list = [3]
 
 numtrials = 10
 numinnertrials = 100
 
-s_upperlim = 16
+s_upperlim = 8
 
 upper_bound = []
 max_lower_bound = []
@@ -26,12 +26,12 @@ for d_index in range(len(d_list)):
 
 	for t1 in range(numtrials):
 		
-		# # Random d-regular graph tests --- expander_ver=0
-		# B = getBapprox(n,d,0)
-		# assert(all((B[:] == B.T[:]).ravel())) #checking to make sure B is symmetric
-		# eigs, eigvecs = np.linalg.eig(d*B)
-		# eigs.sort()
-		# lambd = max(abs(eigs[0]), abs(eigs[-2]))
+		# Random d-regular graph tests --- expander_ver=0
+		B = getBapprox(n,d,0)
+		assert(all((B[:] == B.T[:]).ravel())) #checking to make sure B is symmetric
+		eigs, eigvecs = np.linalg.eig(d*B)
+		eigs.sort()
+		lambd = max(abs(eigs[0]), abs(eigs[-2]))
 
 		# # Random d-reg bipartite graphs --- expander_ver=1
 		# B = getBapprox(n,d,1)
@@ -42,13 +42,13 @@ for d_index in range(len(d_list)):
 		# svals.sort()
 		# lambd = max(abs(svals[0]), abs(svals[-2]))
 
-		# Random margulis graphs --- expander_ver=2
-		assert(d==8)
-		B = getBapprox(n,d,2)
-		assert(all((B[:] == B.T[:]).ravel())) #checking to make sure B is symmetric
-		eigs, eigvecs = np.linalg.eig(d*B)
-		eigs.sort()
-		lambd = max(abs(eigs[0]), abs(eigs[-2]))
+		# # Random margulis graphs --- expander_ver=2
+		# assert(d==8)
+		# B = getBapprox(n,d,2)
+		# assert(all((B[:] == B.T[:]).ravel())) #checking to make sure B is symmetric
+		# eigs, eigvecs = np.linalg.eig(d*B)
+		# eigs.sort()
+		# lambd = max(abs(eigs[0]), abs(eigs[-2]))
 
 		for s in s_set:
 			upper_bound.append( (d,s,(lambd/d)*np.sqrt(n*s/(n-s))))
@@ -120,8 +120,8 @@ for d_index in range(len(d_list)):
 	ax.set_xticks(range(d-1,s_upperlim+1), minor = True)
 	ax.tick_params(axis = 'both', which = 'minor', labelsize = 0)
 	plt.grid(True, which = 'minor', axis = 'x', linestyle = '--', linewidth = '0.4')
-	# plt.savefig('randomdreg_d_%d.pdf'%(d))
+	plt.savefig('randomdreg_d_%d.pdf'%(d))
 	# plt.savefig('randomdregbip_d_%d.pdf'%(d))
-	plt.savefig('randommargulis_d_%d.pdf'%(d))
+	# plt.savefig('randommargulis_d_%d.pdf'%(d))
 	plt.show()
 	plt.close()
