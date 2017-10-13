@@ -115,14 +115,14 @@ def avoidstragg_logistic_regression(n_procs, n_samples, n_features, input_dir, n
 
             grad_multiplier = eta_sequence[i]/(n_samples*(n_procs-1-n_stragglers)/(n_procs-1))
             # ---- update step for gradient descent
-            # np.subtract((1-2*alpha*eta_sequence[i])*beta , grad_multiplier*g, out=beta)
+            np.subtract((1-2*alpha*eta_sequence[i])*beta , grad_multiplier*g, out=beta)
 
-            # ---- updates for accelerated gradient descent
-            theta = 2.0/(i+2.0)
-            ytemp = (1-theta)*beta + theta*utemp
-            betatemp = ytemp - grad_multiplier*g - (2*alpha*eta_sequence[i])*beta
-            utemp = beta + (betatemp-beta)*(1/theta)
-            beta[:] = betatemp
+            # # ---- updates for accelerated gradient descent
+            # theta = 2.0/(i+2.0)
+            # ytemp = (1-theta)*beta + theta*utemp
+            # betatemp = ytemp - grad_multiplier*g - (2*alpha*eta_sequence[i])*beta
+            # utemp = beta + (betatemp-beta)*(1/theta)
+            # beta[:] = betatemp
 
             timeset[i] = time.time() - start_time
 
