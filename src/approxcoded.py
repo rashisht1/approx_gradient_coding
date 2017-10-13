@@ -154,14 +154,14 @@ def approx_coded_logistic_regression(n_procs, n_samples, n_features, input_dir, 
             
             grad_multiplier = eta0[i]/n_samples
             # ---- update step for gradient descent
-            np.subtract((1-2*alpha*eta0[i])*beta , grad_multiplier*g, out=beta)
+            # np.subtract((1-2*alpha*eta0[i])*beta , grad_multiplier*g, out=beta)
 
-            # # ---- updates for accelerated gradient descent
-            # theta = 2.0/(i+2.0)
-            # ytemp = (1-theta)*beta + theta*utemp
-            # betatemp = ytemp - grad_multiplier*g - (2*alpha*eta0[i])*beta
-            # utemp = beta + (betatemp-beta)*(1/theta)
-            # beta[:] = betatemp
+            # ---- updates for accelerated gradient descent
+            theta = 2.0/(i+2.0)
+            ytemp = (1-theta)*beta + theta*utemp
+            betatemp = ytemp - grad_multiplier*g - (2*alpha*eta0[i])*beta
+            utemp = beta + (betatemp-beta)*(1/theta)
+            beta[:] = betatemp
 
             timeset[i] = time.time() - start_time
             betaset[i,:] = beta
