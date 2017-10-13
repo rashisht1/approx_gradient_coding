@@ -34,7 +34,7 @@ def approx_coded_logistic_regression(n_procs, n_samples, n_features, input_dir, 
         support_set = [i for i in range(n_workers) if B[rank-1, i]!=0]
 
         y_current=np.zeros(len(support_set)*rows_per_worker)
-        y_current_mod=np.zeros((1+n_stragglers)*rows_per_worker) # Setting up y_current_mod as well 
+        y_current_mod=np.zeros(len(support_set)*rows_per_worker) # Setting up y_current_mod as well 
         y=load_data(input_dir+"label.dat")
         
         if not is_real_data:
