@@ -22,9 +22,11 @@ def approx_coded_logistic_regression(n_procs, n_samples, n_features, input_dir, 
 
     B = np.zeros((n_workers,n_workers))
 
+    deg = n_stragglers
+
     if rank==0:
         expander_ver = 0
-        B=getBapprox(n_workers,n_stragglers, expander_ver)
+        B=getBapprox(n_workers,deg, expander_ver)
 
     B = comm.bcast(B, root=0)
 
@@ -233,11 +235,11 @@ def approx_coded_logistic_regression(n_procs, n_samples, n_features, input_dir, 
         if not os.path.exists(output_dir):
             os.makedirs(output_dir)
 
-        save_vector(training_loss, output_dir+"approxcoded_acc_%d_training_loss.dat"%(n_stragglers))
-        save_vector(testing_loss, output_dir+"approxcoded_acc_%d_testing_loss.dat"%(n_stragglers))
-        save_vector(auc_loss, output_dir+"approxcoded_acc_%d_auc.dat"%(n_stragglers))
-        save_vector(timeset, output_dir+"approxcoded_acc_%d_timeset.dat"%(n_stragglers))
-        save_matrix(worker_timeset, output_dir+"approxcoded_acc_%d_worker_timeset.dat"%(n_stragglers))
+        save_vector(training_loss, output_dir+"approxcoded_acc_%d_%d_training_loss.dat"%(n_stragglers,deg))
+        save_vector(testing_loss, output_dir+"approxcoded_acc_%d_%d_testing_loss.dat"%(n_stragglers,deg))
+        save_vector(auc_loss, output_dir+"approxcoded_acc_%d_%d_auc.dat"%(n_stragglers,deg))
+        save_vector(timeset, output_dir+"approxcoded_acc_%d_%d_timeset.dat"%(n_stragglers,deg))
+        save_matrix(worker_timeset, output_dir+"approxcoded_acc_%d_%d_worker_timeset.dat"%(n_stragglers,deg))
         print(">>> Done")
 
     comm.Barrier()

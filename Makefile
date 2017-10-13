@@ -1,8 +1,8 @@
 # No. of workers
-N_PROCS=11
+N_PROCS=51
 
 # No. of stragglers in our coding schemes
-N_STRAGGLERS = 4
+N_STRAGGLERS = 5
 
 # Path to folder containing the data folders
 DATA_FOLDER=/straggdata/
