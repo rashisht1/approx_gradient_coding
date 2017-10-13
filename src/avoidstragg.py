@@ -195,7 +195,7 @@ def avoidstragg_logistic_regression(n_procs, n_samples, n_features, input_dir, n
             auc_loss[i] = auc(fpr,tpr)
             print("Iteration %d: Train Loss = %5.3f, Test Loss = %5.3f, AUC = %5.3f, Total time taken =%5.3f"%(i, training_loss[i], testing_loss[i], auc_loss[i], timeset[i]))
         
-        output_dir = input_dir + "results/"
+        output_dir = input_dir + "approx_results/"
         if not os.path.exists(output_dir):
             os.makedirs(output_dir)
 
