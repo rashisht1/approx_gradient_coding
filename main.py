@@ -27,10 +27,10 @@ num_itrs = 100 # Number of iterations
 
 alpha = 1.0/n_rows #sometimes we used 0.0001 # --- coefficient of l2 regularization
 
-learning_rate_schedule = 10.0*np.ones(num_itrs)
-# eta0=10.0
-# t0 = 90.0
-# learning_rate_schedule = [eta0*t0/(i + t0) for i in range(1,num_itrs+1)]
+# learning_rate_schedule = 10.0*np.ones(num_itrs)
+eta0=10.0
+t0 = 90.0
+learning_rate_schedule = [eta0*t0/(i + t0) for i in range(1,num_itrs+1)]
 
 # -------------------------------------------------------------------------------------------------------------------------------
 

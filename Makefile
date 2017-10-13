@@ -1,5 +1,5 @@
 # No. of workers
-N_PROCS=51
+N_PROCS=31
 
 # No. of stragglers in our coding schemes
 N_STRAGGLERS = 5
