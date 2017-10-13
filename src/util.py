@@ -91,9 +91,10 @@ def getBapprox(n, d, expander_ver):
         # expander_ver = 0 represents a random d-regular graph
         # should potentially add Identity to this B matrix ?
         G = nx.random_regular_graph(d,n)
-        adj_list = G.adjacency_list()
-        for i in range(n):
-            B[i,adj_list[i]] = 1
+        edge_list = list(G.edges)
+        for u,v in edge_list:
+            B[u,v] = 1
+            B[v,u] = 1
 
     elif(expander_ver==1):
         #expander_ver = 1 represents a random d-regular (both sides) bipartite graph
