@@ -12,8 +12,8 @@ comm = MPI.COMM_WORLD
 rank = comm.Get_rank()
 size = comm.Get_size()
 
-if len(sys.argv) != 10:
-    print("Usage: python main.py n_procs n_rows n_cols input_dir is_real dataset is_coded n_stragglers coded_ver")
+if len(sys.argv) != 11:
+    print("Usage: python main.py n_procs n_rows n_cols input_dir is_real dataset is_coded n_stragglers coded_ver trial_num")
     sys.exit(0)
 
 n_procs, n_rows, n_cols, input_dir, is_real, dataset, \
