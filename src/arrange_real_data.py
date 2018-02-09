@@ -72,8 +72,8 @@ if real_dataset=="amazon-dataset":
         os.makedirs(output_dir)
 
     for i in range(1, partitions+1):
-        data_matrix = X_train[(i-1)*n_rows_per_worker:i*n_rows_per_worker,:]
-        save_sparse_csr(output_dir+str(i),data_matrix)        
+        data_matrix = X_train[(i-1)*n_rows_per_worker:i*n_rows_per_worker, :]
+        save_sparse_csr(output_dir+str(i), data_matrix)
         print("\t >>> Done with partition %d" % (i))
 
     save_vector(y_train, output_dir + "label.dat")

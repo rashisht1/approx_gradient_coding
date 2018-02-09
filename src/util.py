@@ -7,6 +7,10 @@ import itertools
 import scipy.special as sp
 from scipy.sparse import csr_matrix
 import networkx as nx
+import pandas as pd
+
+from sklearn import  preprocessing
+from sklearn.model_selection import train_test_split
 
 # ---- Data generation, saving, loading and modification routines
 
@@ -15,8 +19,7 @@ def load_data(input_file):
     return mydata
     
 def save_sparse_csr(filename,array):
-    np.savez(filename,data = array.data ,indices=array.indices,
-             indptr =array.indptr, shape=array.shape )
+    np.savez(filename, data = array.data, indices=array.indices, indptr =array.indptr, shape=array.shape)
 
 def load_sparse_csr(filename):
     loader = np.load(filename+".npz")
@@ -188,3 +191,47 @@ def calculate_indexA(boolvec):
 
 def calculate_loss(y,predy,n_samples):
     return np.sum(np.log(1+np.exp(-np.multiply(y,predy))))/n_samples
+
+def load_amazon_data(input_dir, n_procs):
+    real_dataset = "amazon-dataset"
+
+    print("Preparing data for " + real_dataset)
+    trainData = pd.read_csv(input_dir + 'train.csv')
+    trainX = trainData.ix[:, 'RESOURCE':].values
+    trainY = trainData['ACTION'].values
+
+    relabeler = preprocessing.LabelEncoder()
+    for col in range(len(trainX[0, :])):
+        relabeler.fit(trainX[:, col])
+        trainX[:, col] = relabeler.transform(trainX[:, col])
+
+    trainY = 2 * trainY - 1
+
+    d_all_s = interactionTermsAmazon(trainX, degree=2)  # second order
+    # d_all_t = interactionTermsAmazon(trainX, degree=3)  # third order
+    # trainX = np.hstack((trainX, d_all_s, d_all_t))
+    trainX = np.hstack((trainX, d_all_s))
+
+    for col in range(len(trainX[0, :])):
+        relabeler.fit(trainX[:, col])
+        trainX[:, col] = relabeler.transform(trainX[:, col])
+
+    trainX = np.vstack([trainX.T, np.ones(trainX.shape[0])]).T
+
+    X_train, X_valid, y_train, y_valid = train_test_split(trainX, trainY, test_size=0.2, random_state=0)
+
+    encoder = preprocessing.OneHotEncoder(sparse=True)
+    encoder.fit(np.vstack((X_train, X_valid)))
+    X_train = encoder.transform(X_train)  # Returns a sparse matrix (see numpy.sparse)
+    X_valid = encoder.transform(X_valid)
+
+    n_rows, n_cols = X_train.shape
+    print("No. of training samples = %d, Dimension = %d" % (n_rows, n_cols))
+    print("No. of testing samples = %d, Dimension = %d" % (X_valid.shape[0], X_valid.shape[1]))
+
+    # Create output directory
+    partitions = n_procs - 1
+
+    n_rows_per_worker = n_rows // partitions
+
+    return X_train, y_train, X_valid, y_valid
