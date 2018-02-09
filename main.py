@@ -39,6 +39,7 @@ params = dict()
 params['num_itrs'] = num_itrs
 params['alpha'] = alpha
 params['learning_rate'] = learning_rate_schedule
+params['deg'] = deg
 
 if not size == n_procs:
     print("Number of processers doesn't match!")
