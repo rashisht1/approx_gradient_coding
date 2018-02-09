@@ -195,7 +195,7 @@ def calculate_loss(y,predy,n_samples):
 def load_amazon_data(input_dir, n_procs):
     real_dataset = "amazon-dataset"
 
-    print("Preparing data for " + real_dataset)
+    # print("Preparing data for " + real_dataset)
     trainData = pd.read_csv(input_dir + 'train.csv')
     trainX = trainData.ix[:, 'RESOURCE':].values
     trainY = trainData['ACTION'].values
@@ -226,8 +226,8 @@ def load_amazon_data(input_dir, n_procs):
     X_valid = encoder.transform(X_valid)
 
     n_rows, n_cols = X_train.shape
-    print("No. of training samples = %d, Dimension = %d" % (n_rows, n_cols))
-    print("No. of testing samples = %d, Dimension = %d" % (X_valid.shape[0], X_valid.shape[1]))
+    # print("No. of training samples = %d, Dimension = %d" % (n_rows, n_cols))
+    # print("No. of testing samples = %d, Dimension = %d" % (X_valid.shape[0], X_valid.shape[1]))
 
     # Create output directory
     partitions = n_procs - 1

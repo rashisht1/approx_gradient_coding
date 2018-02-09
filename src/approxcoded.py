@@ -201,12 +201,14 @@ def approx_coded_logistic_regression(n_procs, n_samples, n_features, input_dir, 
                 X_temp = load_data(input_dir+str(j)+".dat")
                 X_train = np.vstack((X_train, X_temp))
                 print(">> Loaded "+str(j))
-        # else:
+        else:
             # X_train = load_sparse_csr(input_dir+"1")
             # for j in range(2,n_procs-1):
             #     X_temp = load_sparse_csr(input_dir+str(j))
             #     X_train = sps.vstack((X_train, X_temp))
 
+            X_train, y_train, X_valid, y_valid = load_amazon_data('/straggdata/amazon-dataset/', n_procs)
+            
         # y_train = load_data(input_dir+"label.dat")
         y_train = y_train[0:X_train.shape[0]]
 
