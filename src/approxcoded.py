@@ -90,8 +90,8 @@ def approx_coded_logistic_regression(n_procs, n_samples, n_features, input_dir, 
         completed_workers = np.ndarray(n_procs-1,dtype=bool)
         status = MPI.Status()
 
-        eta0=params[2] # ----- learning rate
-        alpha = params[1] # --- coefficient of l2 regularization
+        eta0=params['learning_rate'] # ----- learning rate
+        alpha = params['alpha'] # --- coefficient of l2 regularization
         utemp = np.zeros(n_features) # for accelerated gradient descent
 
     # Posting all Irecv requests for master and workers
