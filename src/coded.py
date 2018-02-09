@@ -9,13 +9,13 @@ from mpi4py import MPI
 import scipy.special as sp
 import scipy.sparse as sps
 
-def coded_logistic_regression(n_procs, n_samples, n_features, input_dir, n_stragglers, is_real_data, params):
+def coded_logistic_regression(n_procs, n_samples, n_features, input_dir, n_stragglers, is_real_data, params, trial_num):
 
     comm = MPI.COMM_WORLD
     rank = comm.Get_rank()
     size = comm.Get_size()
     
-    rounds=params[0]
+    rounds=params['num_itrs']
 
     n_workers=n_procs-1
     rows_per_worker=n_samples/(n_procs-1)
@@ -80,8 +80,8 @@ def coded_logistic_regression(n_procs, n_samples, n_features, input_dir, n_strag
         completed_workers = np.ndarray(n_procs-1,dtype=bool)
         status = MPI.Status()
 
-        eta0=params[2] # ----- learning rate
-        alpha = params[1] # --- coefficient of l2 regularization
+        eta0 = params['learning_rate'] # ----- learning rate
+        alpha = params['alpha'] # --- coefficient of l2 regularization
         utemp = np.zeros(n_features) # for accelerated gradient descent
     
     B = comm.bcast(B, root=0)
@@ -151,14 +151,14 @@ def coded_logistic_regression(n_procs, n_samples, n_features, input_dir, n_strag
             
             grad_multiplier = eta0[i]/n_samples
             # ---- update step for gradient descent
-            # np.subtract((1-2*alpha*eta0[i])*beta , grad_multiplier*g, out=beta)
+            np.subtract((1-2*alpha*eta0[i])*beta , grad_multiplier*g, out=beta)
 
             # ---- updates for accelerated gradient descent
-            theta = 2.0/(i+2.0)
-            ytemp = (1-theta)*beta + theta*utemp
-            betatemp = ytemp - grad_multiplier*g - (2*alpha*eta0[i])*beta
-            utemp = beta + (betatemp-beta)*(1/theta)
-            beta[:] = betatemp
+            # theta = 2.0/(i+2.0)
+            # ytemp = (1-theta)*beta + theta*utemp
+            # betatemp = ytemp - grad_multiplier*g - (2*alpha*eta0[i])*beta
+            # utemp = beta + (betatemp-beta)*(1/theta)
+            # beta[:] = betatemp
 
             timeset[i] = time.time() - start_time
             betaset[i,:] = beta
@@ -228,15 +228,15 @@ def coded_logistic_regression(n_procs, n_samples, n_features, input_dir, n_strag
             auc_loss[i] = auc(fpr,tpr)
             print("Iteration %d: Train Loss = %5.3f, Test Loss = %5.3f, AUC = %5.3f, Total time taken =%5.3f"%(i, training_loss[i], testing_loss[i], auc_loss[i], timeset[i]))
         
-        output_dir = input_dir + "approx_results/"
+        output_dir = input_dir + "new_results/trial_"+str(trial_num)+"/"
         if not os.path.exists(output_dir):
             os.makedirs(output_dir)
 
-        save_vector(training_loss, output_dir+"coded_acc_%d_training_loss.dat"%(n_stragglers))
-        save_vector(testing_loss, output_dir+"coded_acc_%d_testing_loss.dat"%(n_stragglers))
-        save_vector(auc_loss, output_dir+"coded_acc_%d_auc.dat"%(n_stragglers))
-        save_vector(timeset, output_dir+"coded_acc_%d_timeset.dat"%(n_stragglers))
-        save_matrix(worker_timeset, output_dir+"coded_acc_%d_worker_timeset.dat"%(n_stragglers))
+        save_vector(training_loss, output_dir+"coded_%d_%d_training_loss.dat"%(n_workers, n_stragglers))
+        save_vector(testing_loss, output_dir+"coded_%d_%d_testing_loss.dat"%(n_workers, n_stragglers))
+        save_vector(auc_loss, output_dir+"coded_%d_%d_auc.dat"%(n_workers, n_stragglers))
+        save_vector(timeset, output_dir+"coded_%d_%d_timeset.dat"%(n_workers, n_stragglers))
+        save_matrix(worker_timeset, output_dir+"coded_%d_%d_worker_timeset.dat"%(n_workers, n_stragglers))
         print(">>> Done")
 
     comm.Barrier()

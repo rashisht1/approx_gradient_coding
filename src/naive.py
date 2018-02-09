@@ -8,7 +8,7 @@ import scipy.sparse as sps
 import time
 from mpi4py import MPI
 
-def naive_logistic_regression(n_procs, n_samples, n_features, input_dir, is_real_data, params):
+def naive_logistic_regression(n_procs, n_samples, n_features, input_dir, is_real_data, params, trial_num):
 
     comm = MPI.COMM_WORLD
     rank = comm.Get_rank()

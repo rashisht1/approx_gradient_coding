@@ -9,20 +9,20 @@ from mpi4py import MPI
 import scipy.special as sp
 import scipy.sparse as sps
 
-def approx_coded_logistic_regression(n_procs, n_samples, n_features, input_dir, n_stragglers, is_real_data, params):
+def approx_coded_logistic_regression(n_procs, n_samples, n_features, input_dir, n_stragglers, is_real_data, params, trial_num):
 
     comm = MPI.COMM_WORLD
     rank = comm.Get_rank()
     size = comm.Get_size()
-    
-    rounds=params[0]
+
+    rounds = params['num_itrs']
 
     n_workers=n_procs-1
     rows_per_worker=n_samples/(n_procs-1)
 
     B = np.zeros((n_workers,n_workers))
 
-    deg = n_stragglers
+    deg = params['deg']
 
     if rank==0:
         expander_ver = 0
@@ -154,14 +154,14 @@ def approx_coded_logistic_regression(n_procs, n_samples, n_features, input_dir, 
             
             grad_multiplier = eta0[i]/n_samples
             # ---- update step for gradient descent
-            # np.subtract((1-2*alpha*eta0[i])*beta , grad_multiplier*g, out=beta)
+            np.subtract((1-2*alpha*eta0[i])*beta , grad_multiplier*g, out=beta)
 
             # ---- updates for accelerated gradient descent
-            theta = 2.0/(i+2.0)
-            ytemp = (1-theta)*beta + theta*utemp
-            betatemp = ytemp - grad_multiplier*g - (2*alpha*eta0[i])*beta
-            utemp = beta + (betatemp-beta)*(1/theta)
-            beta[:] = betatemp
+            # theta = 2.0/(i+2.0)
+            # ytemp = (1-theta)*beta + theta*utemp
+            # betatemp = ytemp - grad_multiplier*g - (2*alpha*eta0[i])*beta
+            # utemp = beta + (betatemp-beta)*(1/theta)
+            # beta[:] = betatemp
 
             timeset[i] = time.time() - start_time
             betaset[i,:] = beta
@@ -231,15 +231,15 @@ def approx_coded_logistic_regression(n_procs, n_samples, n_features, input_dir, 
             auc_loss[i] = auc(fpr,tpr)
             print("Iteration %d: Train Loss = %5.3f, Test Loss = %5.3f, AUC = %5.3f, Total time taken =%5.3f"%(i, training_loss[i], testing_loss[i], auc_loss[i], timeset[i]))
         
-        output_dir = input_dir + "approx_results/"
+        output_dir = input_dir + "new_results/trial_"+str(trial_num)+"/"
         if not os.path.exists(output_dir):
             os.makedirs(output_dir)
 
-        save_vector(training_loss, output_dir+"approxcoded_acc_%d_%d_training_loss.dat"%(n_stragglers,deg))
-        save_vector(testing_loss, output_dir+"approxcoded_acc_%d_%d_testing_loss.dat"%(n_stragglers,deg))
-        save_vector(auc_loss, output_dir+"approxcoded_acc_%d_%d_auc.dat"%(n_stragglers,deg))
-        save_vector(timeset, output_dir+"approxcoded_acc_%d_%d_timeset.dat"%(n_stragglers,deg))
-        save_matrix(worker_timeset, output_dir+"approxcoded_acc_%d_%d_worker_timeset.dat"%(n_stragglers,deg))
+        save_vector(training_loss, output_dir+"approxcoded_%d_%d_%d_training_loss.dat"%(n_workers,n_stragglers,deg))
+        save_vector(testing_loss, output_dir+"approxcoded_%d_%d_%d_testing_loss.dat"%(n_workers,n_stragglers,deg))
+        save_vector(auc_loss, output_dir+"approxcoded_%d_%d_%d_auc.dat"%(n_workers,n_stragglers,deg))
+        save_vector(timeset, output_dir+"approxcoded_%d_%d_%d_timeset.dat"%(n_workers,n_stragglers,deg))
+        save_matrix(worker_timeset, output_dir+"approxcoded_%d_%d_%d_worker_timeset.dat"%(n_workers,n_stragglers,deg))
         print(">>> Done")
 
     comm.Barrier()

@@ -8,7 +8,7 @@ import scipy.sparse as sps
 import time
 from mpi4py import MPI
 
-def avoidstragg_logistic_regression(n_procs, n_samples, n_features, input_dir, n_stragglers, is_real_data, params):
+def avoidstragg_logistic_regression(n_procs, n_samples, n_features, input_dir, n_stragglers, is_real_data, params, trial_num):
 
     comm = MPI.COMM_WORLD
     rank = comm.Get_rank()
@@ -195,15 +195,15 @@ def avoidstragg_logistic_regression(n_procs, n_samples, n_features, input_dir, n
             auc_loss[i] = auc(fpr,tpr)
             print("Iteration %d: Train Loss = %5.3f, Test Loss = %5.3f, AUC = %5.3f, Total time taken =%5.3f"%(i, training_loss[i], testing_loss[i], auc_loss[i], timeset[i]))
         
-        output_dir = input_dir + "approx_results/"
+        output_dir = input_dir + "new_results/trial_"+str(trial_num)+"/"
         if not os.path.exists(output_dir):
             os.makedirs(output_dir)
 
-        save_vector(training_loss, output_dir+"avoidstragg_acc_%d_training_loss.dat"%(n_stragglers))
-        save_vector(testing_loss, output_dir+"avoidstragg_acc_%d_testing_loss.dat"%(n_stragglers))
-        save_vector(auc_loss, output_dir+"avoidstragg_acc_%d_auc.dat"%(n_stragglers))
-        save_vector(timeset, output_dir+"avoidstragg_acc_%d_timeset.dat"%(n_stragglers))
-        save_matrix(worker_timeset, output_dir+"avoidstragg_acc_%d_worker_timeset.dat"%(n_stragglers))
+        save_vector(training_loss, output_dir+"avoidstragg_%d_%d_training_loss.dat"%(n_procs-1,n_stragglers))
+        save_vector(testing_loss, output_dir+"avoidstragg_%d_%d_testing_loss.dat"%(n_procs-1,n_stragglers))
+        save_vector(auc_loss, output_dir+"avoidstragg_%d_%d_auc.dat"%(n_procs-1,n_stragglers))
+        save_vector(timeset, output_dir+"avoidstragg_%d_%d_timeset.dat"%(n_procs-1,n_stragglers))
+        save_matrix(worker_timeset, output_dir+"avoidstragg_%d_%d_worker_timeset.dat"%(n_procs-1,n_stragglers))
         print(">>> Done")
 
     comm.Barrier()
