@@ -143,7 +143,7 @@ def coded_logistic_regression(n_procs, n_samples, n_features, input_dir, n_strag
 
             
             completed_ind_set = [l for l in range(n_procs-1) if completed_workers[l]]
-            A_row[0,completed_ind_set] = np.linalg.lstsq(B[completed_ind_set,:].T,np.ones(n_workers))[0]
+            A_row[0,completed_ind_set] = np.linalg.lstsq(B[completed_ind_set,:].T,np.ones(n_workers), rcond=None)[0]
             g = np.squeeze(np.dot(A_row, msgBuffers))
             
             # case_idx = calculate_indexA(completed_stragglers)
