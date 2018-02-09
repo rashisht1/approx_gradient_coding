@@ -12,14 +12,14 @@ comm = MPI.COMM_WORLD
 rank = comm.Get_rank()
 size = comm.Get_size()
 
-if len(sys.argv) != 11:
-    print("Usage: python main.py n_procs n_rows n_cols input_dir is_real dataset is_coded n_stragglers coded_ver trial_num")
+if len(sys.argv) != 12:
+    print("Usage: python main.py n_procs n_rows n_cols input_dir is_real dataset is_coded n_stragglers coded_ver trial_num deg")
     sys.exit(0)
 
 n_procs, n_rows, n_cols, input_dir, is_real, dataset, \
-    is_coded, n_stragglers, coded_ver, trial_num = [x for x in sys.argv[1:]]
-n_procs, n_rows, n_cols, is_real, is_coded, n_stragglers, coded_ver, trial_num = \
-    int(n_procs), int(n_rows), int(n_cols), int(is_real), int(is_coded), int(n_stragglers), int(coded_ver), int(trial_num)
+    is_coded, n_stragglers, coded_ver, trial_num, deg = [x for x in sys.argv[1:]]
+n_procs, n_rows, n_cols, is_real, is_coded, n_stragglers, coded_ver, trial_num, deg = \
+    int(n_procs), int(n_rows), int(n_cols), int(is_real), int(is_coded), int(n_stragglers), int(coded_ver), int(trial_num), int(deg)
 input_dir = input_dir+"/" if not input_dir[-1] == "/" else input_dir
 
 

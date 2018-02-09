@@ -14,7 +14,7 @@ def avoidstragg_logistic_regression(n_procs, n_samples, n_features, input_dir, n
     rank = comm.Get_rank()
     size = comm.Get_size()
     
-    rounds = params[0]
+    rounds = params['num_itrs']
 
     beta=np.zeros(n_features)
 
@@ -57,8 +57,8 @@ def avoidstragg_logistic_regression(n_procs, n_samples, n_features, input_dir, n
 
         status = MPI.Status()
 
-        alpha = params[1] # --- coefficient of l2 regularization
-        eta_sequence = params[2] # --- learning rate schedule
+        alpha = params['alpha'] # --- coefficient of l2 regularization
+        eta_sequence = params['learning_rate'] # --- learning rate schedule
         utemp = np.zeros(n_features) # for accelerated gradient descent
 
     # Posting all Irecv requests for master and workers
