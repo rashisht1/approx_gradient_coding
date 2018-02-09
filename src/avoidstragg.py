@@ -18,8 +18,6 @@ def avoidstragg_logistic_regression(n_procs, n_samples, n_features, input_dir, n
 
     beta=np.zeros(n_features)
 
-    rows_per_worker = n_samples / (n_procs - 1)
-
     # Loading data on workers
     if (rank):
 
@@ -27,9 +25,8 @@ def avoidstragg_logistic_regression(n_procs, n_samples, n_features, input_dir, n
             X_current = load_data(input_dir+str(rank)+".dat")
             y = load_data(input_dir+"label.dat")
         else:
-            X_train, y_train, X_valid, y_valid = load_amazon_data('/straggdata/amazon-dataset/', n_procs)
-            y = y_train
-            X_current = X_train[(rank- 1) * rows_per_worker:(rank) * rows_per_worker, :]
+            X_current = load_sparse_csr(input_dir+str(rank))
+            y = load_data(input_dir+"label.dat")
 
         rows_per_worker = X_current.shape[0]
         y_current=y[(rank-1)*rows_per_worker:rank*rows_per_worker]
@@ -164,21 +161,20 @@ def avoidstragg_logistic_regression(n_procs, n_samples, n_features, input_dir, n
                 X_temp = load_data(input_dir+str(j)+".dat")
                 X_train = np.vstack((X_train, X_temp))
         else:
-        #     X_train = load_sparse_csr(input_dir+"1")
-        #     for j in range(2,n_procs-1):
-        #         X_temp = load_sparse_csr(input_dir+str(j))
-        #         X_train = sps.vstack((X_train, X_temp))
-            X_train, y_train, X_valid, y_valid = load_amazon_data('/straggdata/amazon-dataset/', n_procs)
+            X_train = load_sparse_csr(input_dir+"1")
+            for j in range(2,n_procs-1):
+                X_temp = load_sparse_csr(input_dir+str(j))
+                X_train = sps.vstack((X_train, X_temp))
 
-        # y_train = load_data(input_dir+"label.dat")
+        y_train = load_data(input_dir+"label.dat")
         y_train = y_train[0:X_train.shape[0]]
 
         # Load all testing data
-        y_test = y_valid # load_data(input_dir + "label_test.dat")
+        y_test = load_data(input_dir + "label_test.dat")
         if not is_real_data:
             X_test = load_data(input_dir+"test_data.dat")
         else:
-            X_test = X_valid # load_sparse_csr(input_dir+"test_data")
+            X_test = load_sparse_csr(input_dir+"test_data")
 
         n_train = X_train.shape[0]
         n_test = X_test.shape[0]
