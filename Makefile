@@ -2,11 +2,11 @@ TRIAL_NUM = ${trialNum}
 # Must export the above environment variable
 
 # No. of workers
-N_PROCS=21
+N_PROCS=${nProcs}
 
 # No. of stragglers in our coding schemes
-N_STRAGGLERS = 4
-DEG = 3
+N_STRAGGLERS = ${nStraggs}
+DEG = ${nDeg}
 
 # Path to folder containing the data folders
 DATA_FOLDER=/straggdata/
@@ -37,3 +37,5 @@ approxcoded:
 
 avoidstragg:
 	mpirun -np $(N_PROCS) python main.py $(N_PROCS) $(N_ROWS) $(N_COLS) $(DATA_FOLDER) $(IS_REAL) $(DATASET) 1 $(N_STRAGGLERS) 2 $(TRIAL_NUM) 0
+
+all: arrange_real_data cyccoded avoidstragg avoidstragg
