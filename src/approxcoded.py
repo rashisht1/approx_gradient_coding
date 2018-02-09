@@ -208,7 +208,7 @@ def approx_coded_logistic_regression(n_procs, n_samples, n_features, input_dir, 
             #     X_train = sps.vstack((X_train, X_temp))
 
             X_train, y_train, X_valid, y_valid = load_amazon_data('/straggdata/amazon-dataset/', n_procs)
-            
+
         # y_train = load_data(input_dir+"label.dat")
         y_train = y_train[0:X_train.shape[0]]
 
